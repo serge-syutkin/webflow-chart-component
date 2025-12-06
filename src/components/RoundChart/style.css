@@ -1,0 +1,53 @@
+.chart-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    font-family: inherit;
+    color: inherit;
+    text-align: center;
+  }
+  
+  .chart-wrapper {
+  
+      position: relative;
+  
+      max-width: 600px;
+  
+      margin-left: auto;
+  
+      margin-right: auto;
+  
+      margin-bottom: 1rem;
+  
+  }  .center-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-weight: bold;
+  }
+  
+  .center-text.bottom {
+    top: auto;
+    bottom: 0;
+    transform: translate(-50%, 0);
+  }
+  
+  .caption-text {
+    font-size: 1em;
+    margin-bottom: 0.5rem;
+  }
+  
+  .source-text a {
+    font-size: 0.7em;
+    color: inherit;
+    text-decoration: none;
+  }
+  
+  .source-text a:hover {
+    text-decoration: underline;
+  }
+  

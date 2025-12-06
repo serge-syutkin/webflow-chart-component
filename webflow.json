@@ -1,0 +1,17 @@
+{
+  "library": {
+    "name": "round charts 1.0",
+    "components": [
+      "./src/**/*.webflow.@(js|jsx|mjs|ts|tsx)"
+    ],
+    "description": "round charts for reports",
+    "id": "round-charts-1-0"
+  },
+  "telemetry": {
+    "global": {
+      "allowTelemetry": true,
+      "lastPrompted": 1765059884221,
+      "version": "1.8.51"
+    }
+  }
+}
