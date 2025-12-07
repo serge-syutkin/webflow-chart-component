@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Chart, DoughnutController, ArcElement, Tooltip } from 'chart.js';
 import './style.css';
 
@@ -30,9 +30,32 @@ export const RoundChart: React.FC<RoundChartProps> = ({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const chartInstance = useRef<Chart | null>(null);
+  const [isIntersecting, setIsIntersecting] = useState(false);
 
   useEffect(() => {
-    if (!canvasRef.current || !containerRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsIntersecting(true);
+          observer.disconnect();
+        }
+      },
+      {
+        rootMargin: '0px 0px -25% 0px',
+      }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    return () => {
+      observer.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!isIntersecting || !canvasRef.current || !containerRef.current) return;
 
     const ctx = canvasRef.current.getContext('2d');
     if (!ctx) return;
@@ -89,7 +112,7 @@ export const RoundChart: React.FC<RoundChartProps> = ({
         chartInstance.current.destroy();
       }
     };
-  }, [value, chartColor, baseColor, chartType, angle]);
+  }, [isIntersecting, value, chartColor, baseColor, chartType, angle]);
 
   return (
     <div className="chart-container" ref={containerRef}>
