@@ -2,7 +2,50 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Chart, DoughnutController, ArcElement, Tooltip } from 'chart.js';
 import './style.css';
 
-Chart.register(DoughnutController, ArcElement, Tooltip);
+// Custom plugin for rounded caps
+const roundedCaps = {
+  id: 'roundedCaps',
+  afterDraw: (chart: Chart) => {
+    if (chart.config.options?.plugins?.roundedCaps?.disabled) {
+      return;
+    }
+    const ctx = chart.ctx;
+    chart.getDatasetMeta(0).data.forEach((arc, index) => {
+      if (index > 0) return; // Only apply to the first data point (the active value)
+
+      const { x, y, startAngle, endAngle, outerRadius, innerRadius } = arc;
+      const arcThickness = outerRadius - innerRadius;
+      const capRadius = arcThickness / 2;
+      const angleMid = startAngle + (endAngle - startAngle) / 2;
+
+      // Don't draw caps if the arc is a full circle
+      if (endAngle - startAngle >= Math.PI * 2 - 0.01) {
+          return;
+      }
+      
+      ctx.save();
+      ctx.fillStyle = (chart.data.datasets[0].backgroundColor as string[])[index];
+
+      // Draw start cap
+      const startX = x + Math.cos(startAngle) * (innerRadius + capRadius);
+      const startY = y + Math.sin(startAngle) * (innerRadius + capRadius);
+      ctx.beginPath();
+      ctx.arc(startX, startY, capRadius, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Draw end cap
+      const endX = x + Math.cos(endAngle) * (innerRadius + capRadius);
+      const endY = y + Math.sin(endAngle) * (innerRadius + capRadius);
+      ctx.beginPath();
+      ctx.arc(endX, endY, capRadius, 0, Math.PI * 2);
+      ctx.fill();
+      
+      ctx.restore();
+    });
+  },
+};
+
+Chart.register(DoughnutController, ArcElement, Tooltip, roundedCaps);
 
 interface RoundChartProps {
   value?: number;
@@ -62,7 +105,6 @@ export const RoundChart: React.FC<RoundChartProps> = ({
     const ctx = canvasRef.current.getContext('2d');
     if (!ctx) return;
 
-    // Helper to resolve CSS variables
     const resolveColor = (color: string) => {
       if (color.startsWith('var(')) {
         const varName = color.match(/--[a-zA-Z0-9-]+/)?.[0];
@@ -76,18 +118,16 @@ export const RoundChart: React.FC<RoundChartProps> = ({
     const resolvedChartColor = resolveColor(chartColor);
     const resolvedBaseColor = resolveColor(baseColor);
 
-    // Destroy previous chart instance
     if (chartInstance.current) {
       chartInstance.current.destroy();
     }
-
+    
     const data = {
       datasets: [
         {
           data: [value, 100 - value],
           backgroundColor: [resolvedChartColor, resolvedBaseColor],
           borderWidth: 0,
-          borderRadius: chartType === 'Doughnut' && borderStyle === 'Rounded' ? 10 : 0,
         },
       ],
     };
@@ -101,6 +141,11 @@ export const RoundChart: React.FC<RoundChartProps> = ({
         tooltips: {
             enabled: false,
         },
+        plugins: {
+            roundedCaps: {
+                disabled: chartType !== 'Doughnut' || borderStyle !== 'Rounded'
+            }
+        }
     };
 
     chartInstance.current = new Chart(ctx, {
@@ -109,7 +154,6 @@ export const RoundChart: React.FC<RoundChartProps> = ({
       options: options,
     });
 
-    // Cleanup on unmount
     return () => {
       if (chartInstance.current) {
         chartInstance.current.destroy();
