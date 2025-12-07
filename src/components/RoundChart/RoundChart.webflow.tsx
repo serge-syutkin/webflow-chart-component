@@ -35,6 +35,11 @@ export default declareComponent(RoundChart, {
       options: ['360', '180'],
       defaultValue: '360',
     }),
+    borderStyle: props.Variant({
+      name: 'Border Style',
+      options: ['Default', 'Rounded'],
+      defaultValue: 'Default',
+    }),
     caption: props.Text({
       name: 'Caption Text',
       defaultValue: '% of customers who use channels in a single transaction',

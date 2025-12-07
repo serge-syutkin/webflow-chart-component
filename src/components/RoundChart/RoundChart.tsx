@@ -10,6 +10,7 @@ interface RoundChartProps {
   baseColor?: string;
   chartType?: 'Doughnut' | 'Pie';
   angle?: '180' | '360';
+  borderStyle?: 'Default' | 'Rounded';
   caption?: string;
   sourceText?: string;
   sourceLink?: any; // Webflow link prop type
@@ -22,6 +23,7 @@ export const RoundChart: React.FC<RoundChartProps> = ({
   baseColor = '#e9ecef',
   chartType = 'Doughnut',
   angle = '360',
+  borderStyle = 'Default',
   caption = '% of customers who use channels in a single transaction',
   sourceText = 'Bloomberg',
   sourceLink = { href: '#' },
@@ -85,6 +87,7 @@ export const RoundChart: React.FC<RoundChartProps> = ({
           data: [value, 100 - value],
           backgroundColor: [resolvedChartColor, resolvedBaseColor],
           borderWidth: 0,
+          borderRadius: chartType === 'Doughnut' && borderStyle === 'Rounded' ? 10 : 0,
         },
       ],
     };
@@ -112,7 +115,7 @@ export const RoundChart: React.FC<RoundChartProps> = ({
         chartInstance.current.destroy();
       }
     };
-  }, [isIntersecting, value, chartColor, baseColor, chartType, angle]);
+  }, [isIntersecting, value, chartColor, baseColor, chartType, angle, borderStyle]);
 
   return (
     <div className="chart-container" ref={containerRef}>
