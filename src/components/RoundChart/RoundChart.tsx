@@ -70,7 +70,7 @@ export const RoundChart: React.FC<RoundChartProps> = ({
         responsive: true,
         maintainAspectRatio: false,
         cutout: chartType === 'Doughnut' ? '70%' : '0%',
-        rotation: (chartType === 'Pie' && angle === '180') ? -90 : 0,
+        rotation: angle === '180' ? -90 : 0,
         circumference: angle === '180' ? 180 : 360,
         tooltips: {
             enabled: false,
