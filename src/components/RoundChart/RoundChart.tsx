@@ -171,10 +171,14 @@ export const RoundChart: React.FC<RoundChartProps> = ({
             </div>
         </div>
       </div>
-      <div>
+      <div className="text-container">
         <div className="caption-text">{caption}</div>
         <div className="source-text">
-            <a href={sourceLink?.href}>{sourceText}</a>
+            {sourceLink?.href && sourceLink.href !== '#' ? (
+                <a href={sourceLink.href}>{sourceText}</a>
+            ) : (
+                <span>{sourceText}</span>
+            )}
         </div>
       </div>
     </div>
